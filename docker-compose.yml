@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # 1. The Ollama Service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: print_ai
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama_data:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  # 2. Your Python Script Service
+  watcher:
+    build: ./watcher-app
+    container_name: print_watcher
+    depends_on:
+      - ollama
+    environment:
+      - OLLAMA_URL=http://ollama:11434
+      - PRINTER_IP=10.0.0.100 # Your printer's local IP address.
+      - MAINBOARD_ID=YOUR_MAINBOARD_ID_HERE # Found in your printer settings or via network discovery.
+      - MODEL_NAME=llava
+      - CHECK_INTERVAL=60
+      - FAILURE_THRESHOLD=5
+      - CONFIDENCE_THRESHOLD=80
+    volumes:
+      - ./failed_prints:/app/failures
+    restart: always

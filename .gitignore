@@ -1,0 +1,6 @@
+ollama_data/
+failed_prints/
+__pycache__/
+*.pyc
+.env
+
