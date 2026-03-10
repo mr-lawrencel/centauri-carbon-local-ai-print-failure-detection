@@ -41,4 +41,10 @@ services:
       - CONFIDENCE_THRESHOLD=80
     volumes:
       - ./failed_prints:/app/failures
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     restart: always

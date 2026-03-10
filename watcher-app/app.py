@@ -8,6 +8,7 @@ from datetime import datetime
 from config import Config
 from sdcp_client import is_printer_printing, pause_printer, client
 from vision import capture_screenshot, analyze_image_with_ollama, ensure_model_pulled
+from healthcheck import start_health_check_server, update_heartbeat
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -22,6 +23,9 @@ os.makedirs(Config.FAILURES_DIR, exist_ok=True)
 def main_loop():
     """Main execution loop for the print watcher."""
     logger.info(f"Initializing Print Watcher for {Config.PRINTER_IP}...")
+    
+    # Start the health check server in a background thread
+    start_health_check_server(port=8080)
     
     # Wait for Ollama service to become reachable
     ollama_ready = False
@@ -48,6 +52,9 @@ def main_loop():
     
     while True:
         try:
+            # Update heartbeat to signal the main loop is still running
+            update_heartbeat()
+            
             if is_printer_printing():
                 logger.info("Printer is active. Capturing frame for analysis...")
                 
