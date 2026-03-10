@@ -15,6 +15,7 @@ An autonomous, locally-hosted 3D print failure detection system for the Centauri
 - **Smart Thresholds**: Requires multiple consecutive detections to prevent "false positive" pauses from temporary shadows or movement.
 - **Modular Architecture**: Cleanly separated logic for configuration, printer communication, and AI vision.
 - **Service Orchestration**: Docker healthchecks ensure the watcher only starts once the AI engine is fully ready.
+- **Discord Notifications**: Get real-time alerts when a print starts, finishes, or is paused due to failure.
 
 ## 🛠 Hardware Requirements
 - **Printer**: Centauri Carbon (tested). Should work with other SDCP v3 printers.
@@ -65,6 +66,7 @@ python3 tests/test_vision.py
 | :--- | :--- | :--- |
 | `PRINTER_IP` | Your printer's local IP address. | **REQUIRED** |
 | `MAINBOARD_ID` | Your printer's Mainboard ID (found in settings). | **REQUIRED** |
+| `DISCORD_WEBHOOK_URL` | Optional Discord webhook URL for notifications. | `None` |
 | `CHECK_INTERVAL` | Seconds between AI checks. | `60` |
 | `FAILURE_THRESHOLD` | Consecutive detections needed to pause. | `5` |
 | `CONFIDENCE_THRESHOLD` | AI confidence score (0-100) to trigger a "fail". | `80` |

@@ -81,6 +81,25 @@ docker compose up -d
 
 ---
 
+## 🔔 Notifications (Optional)
+
+The system supports real-time notifications via Discord webhooks.
+
+1.  **Create a Webhook**: In Discord, go to **Server Settings > Integrations > Webhooks** and create a new webhook. Copy the URL.
+2.  **Add to Config**: Add the URL to your `docker-compose.yml`:
+    ```yaml
+    environment:
+      - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+    ```
+3.  **Apply**: Run `docker compose up -d`.
+
+You will now receive alerts for:
+*   🚀 **Print Started**
+*   🏁 **Print Finished/Stopped**
+*   🚨 **Failure Detected** (Triggered when the printer is automatically paused)
+
+---
+
 ## 🔍 Troubleshooting Common Issues
 
 *   **"SDCP Connection Error"**: Usually means the printer is off, on a different IP, or the network is congested.
