@@ -16,13 +16,21 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
   # 2. Your Python Script Service
   watcher:
     build: ./watcher-app
     container_name: print_watcher
     depends_on:
-      - ollama
+      ollama:
+        condition: service_healthy
     environment:
       - OLLAMA_URL=http://ollama:11434
       - PRINTER_IP=10.0.0.100 # Your printer's local IP address.
