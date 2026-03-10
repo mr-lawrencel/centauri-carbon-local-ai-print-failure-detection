@@ -9,6 +9,7 @@ from config import Config
 from sdcp_client import is_printer_printing, pause_printer, client
 from vision import capture_screenshot, analyze_image_with_ollama, ensure_model_pulled
 from healthcheck import start_health_check_server, update_heartbeat
+from notifications import notifier
 
 # --- Logging Setup ---
 logging.basicConfig(
@@ -48,6 +49,7 @@ def main_loop():
         return
     
     consecutive_failures = 0
+    is_printing_last_check = False
     logger.info("Watcher started. Monitoring printer status...")
     
     while True:
@@ -55,7 +57,17 @@ def main_loop():
             # Update heartbeat to signal the main loop is still running
             update_heartbeat()
             
-            if is_printer_printing():
+            is_currently_printing = is_printer_printing()
+            
+            # Detect transitions for start/finish notifications
+            if is_currently_printing and not is_printing_last_check:
+                notifier.notify(f"🚀 **Print Started** on {Config.PRINTER_IP}")
+            elif not is_currently_printing and is_printing_last_check:
+                notifier.notify(f"🏁 **Print Finished or Stopped** on {Config.PRINTER_IP}")
+            
+            is_printing_last_check = is_currently_printing
+
+            if is_currently_printing:
                 logger.info("Printer is active. Capturing frame for analysis...")
                 
                 screenshot_path = "current_frame.jpg"
@@ -71,6 +83,7 @@ def main_loop():
                         shutil.move(screenshot_path, failure_save_path)
                         
                         if consecutive_failures >= Config.FAILURE_THRESHOLD:
+                            notifier.notify(f"🚨 **FAILURE DETECTED!** Pausing print on {Config.PRINTER_IP} after {Config.FAILURE_THRESHOLD} detections.")
                             pause_printer()
                             consecutive_failures = 0
                     else:

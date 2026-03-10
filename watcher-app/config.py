@@ -14,3 +14,4 @@ class Config:
     CONFIDENCE_THRESHOLD = int(os.environ.get("CONFIDENCE_THRESHOLD", 80))
     MODEL_NAME = os.environ.get("MODEL_NAME", "moondream")
     FAILURES_DIR = "/app/failures"
+    DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
