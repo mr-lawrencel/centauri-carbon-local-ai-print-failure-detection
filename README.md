@@ -10,9 +10,11 @@ An autonomous, locally-hosted 3D print failure detection system for the Centauri
 
 ## 🚀 Features
 - **Local AI Analysis**: Uses `moondream` or `llava` via Ollama.
-- **Auto-Pause**: Sends a native SDCP "Pause" command to the printer when failure thresholds are met.
+- **Auto-Pause**: Sends a native SDCP "Pause" command to the printer when failure thresholds are met via a reliable WebSocket client.
 - **Failure Gallery**: Automatically saves images of detected failures to `./failed_prints` for later review or dataset building.
 - **Smart Thresholds**: Requires multiple consecutive detections to prevent "false positive" pauses from temporary shadows or movement.
+- **Modular Architecture**: Cleanly separated logic for configuration, printer communication, and AI vision.
+- **Service Orchestration**: Docker healthchecks ensure the watcher only starts once the AI engine is fully ready.
 
 ## 🛠 Hardware Requirements
 - **Printer**: Centauri Carbon (tested). Should work with other SDCP v3 printers.
@@ -43,7 +45,7 @@ If you prefer to run without Docker:
    - Install `ffmpeg` on your system path.
 2. **Install Dependencies**:
    ```bash
-   pip install requests
+   pip install -r watcher-app/requirements.txt
    ```
 3. **Run**:
    ```bash
@@ -51,6 +53,12 @@ If you prefer to run without Docker:
    export MAINBOARD_ID="your_id_here"
    python watcher-app/app.py
    ```
+
+## 🧪 Testing
+The project includes a suite of unit tests for verifying the AI vision logic:
+```bash
+python3 tests/test_vision.py
+```
 
 ## ⚙️ Configuration Variables
 | Variable | Description | Default |

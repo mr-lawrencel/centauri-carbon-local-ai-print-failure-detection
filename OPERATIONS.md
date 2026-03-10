@@ -47,8 +47,16 @@ docker exec print_ai ollama list
 ### Manual Printer Status Check
 Test the SDCP connection to the printer manually from within the container:
 ```bash
-docker exec print_watcher python -c "import app; print('Is Printing:', app.is_printer_printing())"
+docker exec print_watcher python -c "from sdcp_client import is_printer_printing; print('Is Printing:', is_printer_printing())"
 ```
+
+### Run Unit Tests
+To verify the vision and parsing logic:
+```bash
+docker exec print_watcher python3 -m unittest discover -s /app/tests -p "test_*.py"
+```
+
+*(Note: In the container, you might need to adjust the path if the tests are mounted differently)*
 
 ### View Captured Failures
 Check the directory where the system saves images that triggered a "YES" response:
