@@ -6,7 +6,7 @@ import requests
 from datetime import datetime
 
 from config import Config
-from sdcp_client import is_printer_printing, pause_printer
+from sdcp_client import is_printer_printing, pause_printer, client
 from vision import capture_screenshot, analyze_image_with_ollama, ensure_model_pulled
 
 # --- Logging Setup ---
@@ -85,3 +85,5 @@ if __name__ == "__main__":
         main_loop()
     except KeyboardInterrupt:
         logger.info("Watcher stopped by user.")
+    finally:
+        client.close()
